@@ -40,8 +40,8 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Galaxia de Armas API', // Título actualizado
-      description: 'API para gestionar las armas cósmicas en un universo automatizado.', // Descripción temática
+      title: 'Galaxia de Estrellas API', // Título actualizado
+      description: 'API para gestionar las estrellas en un universo automatizado.', // Descripción temática
       version: '1.0.0',
     },
     server: [{ url: `https://api-rest-fgqq.onrender.com` }], // Cambia la URL si es necesario
@@ -103,12 +103,12 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs, {
 
 /**
  * @swagger
- * /galaxias:
+ * /estrellas:
  *   get:
- *     description: Obtener todas las galaxias
+ *     description: Obtener todas las estrellas
  *     responses:
  *       200:
- *         description: Lista de galaxias
+ *         description: Lista de estrellas
  *         content:
  *           application/json:
  *             schema:
@@ -127,33 +127,33 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs, {
  *                   origen_galactico:
  *                     type: string
  */
-app.get('/galaxias', async (req, res) => {
+app.get('/estrellas', async (req, res) => {
   try {
     console.log('Conectando a la base de datos...');
-    const [rows] = await connection.query('SELECT * FROM Galaxias'); // Realiza la consulta
+    const [rows] = await connection.query('SELECT * FROM Estrellas'); // Realiza la consulta en la tabla Estrellas
     console.log('Resultado de la consulta:', rows); // Verifica qué está devolviendo la base de datos
     res.json(rows); // Devuelve los resultados
   } catch (err) {
-    console.error('Error en la consulta GET /galaxias:', err);
-    res.status(500).json({ message: 'Error al obtener galaxias' });
+    console.error('Error en la consulta GET /estrellas:', err);
+    res.status(500).json({ message: 'Error al obtener estrellas' });
   }
 });
 
 /**
  * @swagger
- * /galaxias/{id}:
+ * /estrellas/{id}:
  *   get:
- *     description: Obtener galaxia por ID
+ *     description: Obtener estrella por ID
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID de la galaxia a buscar
+ *         description: ID de la estrella a buscar
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Galaxia encontrada
+ *         description: Estrella encontrada
  *         content:
  *           application/json:
  *             schema:
@@ -170,27 +170,27 @@ app.get('/galaxias', async (req, res) => {
  *                 origen_galactico:
  *                   type: string
  *       404:
- *         description: Galaxia no encontrada
+ *         description: Estrella no encontrada
  */
-app.get('/galaxias/:id', async (req, res) => {
+app.get('/estrellas/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await connection.query('SELECT * FROM Galaxias WHERE id = ?', [id]); // Uso de parámetros
+    const [rows] = await connection.query('SELECT * FROM Estrellas WHERE id = ?', [id]); // Uso de parámetros
     if (rows.length === 0) {
-      return res.status(404).json({ message: 'Galaxia no encontrada' });
+      return res.status(404).json({ message: 'Estrella no encontrada' });
     }
     res.json(rows[0]);
   } catch (err) {
-    console.error('Error en la consulta GET /galaxias/:id:', err);
-    res.status(500).json({ message: 'Error al obtener galaxia por ID' });
+    console.error('Error en la consulta GET /estrellas/:id:', err);
+    res.status(500).json({ message: 'Error al obtener estrella por ID' });
   }
 });
 
 /**
  * @swagger
- * /galaxias:
+ * /estrellas:
  *   post:
- *     description: Crear una nueva galaxia
+ *     description: Crear una nueva estrella
  *     requestBody:
  *       required: true
  *       content:
@@ -208,11 +208,11 @@ app.get('/galaxias/:id', async (req, res) => {
  *                 type: string
  *     responses:
  *       201:
- *         description: Galaxia creada
+ *         description: Estrella creada
  *       400:
  *         description: Datos inválidos
  */
-app.post('/galaxias', async (req, res) => {
+app.post('/estrellas', async (req, res) => {
   const { nombre, masa_estelar, tipo_de_estrella, origen_galactico } = req.body;
   if (!nombre || !masa_estelar || !tipo_de_estrella || !origen_galactico) {
     return res.status(400).json({ message: 'Faltan datos requeridos' });
@@ -220,26 +220,26 @@ app.post('/galaxias', async (req, res) => {
   
   try {
     const [result] = await connection.query(
-      'INSERT INTO Galaxias (nombre, masa_estelar, tipo_de_estrella, origen_galactico) VALUES (?, ?, ?, ?)',
+      'INSERT INTO Estrellas (nombre, masa_estelar, tipo_de_estrella, origen_galactico) VALUES (?, ?, ?, ?)',
       [nombre, masa_estelar, tipo_de_estrella, origen_galactico]
     );
     res.status(201).json({ id: result.insertId, nombre, masa_estelar, tipo_de_estrella, origen_galactico });
   } catch (err) {
-    console.error('Error en la consulta POST /galaxias:', err);
-    res.status(500).json({ message: 'Error al crear galaxia' });
+    console.error('Error en la consulta POST /estrellas:', err);
+    res.status(500).json({ message: 'Error al crear estrella' });
   }
 });
 
 /**
  * @swagger
- * /galaxias/{id}:
+ * /estrellas/{id}:
  *   put:
- *     description: Actualizar una galaxia por ID
+ *     description: Actualizar una estrella por ID
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID de la galaxia a actualizar
+ *         description: ID de la estrella a actualizar
  *         schema:
  *           type: integer
  *     requestBody:
@@ -259,13 +259,13 @@ app.post('/galaxias', async (req, res) => {
  *                 type: string
  *     responses:
  *       200:
- *         description: Galaxia actualizada
+ *         description: Estrella actualizada
  *       400:
  *         description: Datos inválidos
  *       404:
- *         description: Galaxia no encontrada
+ *         description: Estrella no encontrada
  */
-app.put('/galaxias/:id', async (req, res) => {
+app.put('/estrellas/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, masa_estelar, tipo_de_estrella, origen_galactico } = req.body;
   
@@ -275,52 +275,54 @@ app.put('/galaxias/:id', async (req, res) => {
 
   try {
     const [result] = await connection.query(
-      'UPDATE Galaxias SET nombre = ?, masa_estelar = ?, tipo_de_estrella = ?, origen_galactico = ? WHERE id = ?',
+      'UPDATE Estrellas SET nombre = ?, masa_estelar = ?, tipo_de_estrella = ?, origen_galactico = ? WHERE id = ?',
       [nombre, masa_estelar, tipo_de_estrella, origen_galactico, id]
     );
+
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Galaxia no encontrada' });
+      return res.status(404).json({ message: 'Estrella no encontrada' });
     }
-    res.json({ message: 'Galaxia actualizada' });
+
+    res.json({ message: 'Estrella actualizada' });
   } catch (err) {
-    console.error('Error en la consulta PUT /galaxias/:id:', err);
-    res.status(500).json({ message: 'Error al actualizar galaxia' });
+    console.error('Error en la consulta PUT /estrellas/:id:', err);
+    res.status(500).json({ message: 'Error al actualizar estrella' });
   }
 });
 
 /**
  * @swagger
- * /galaxias/{id}:
+ * /estrellas/{id}:
  *   delete:
- *     description: Eliminar una galaxia por ID
+ *     description: Eliminar una estrella por ID
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID de la galaxia a eliminar
+ *         description: ID de la estrella a eliminar
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Galaxia eliminada
+ *         description: Estrella eliminada
  *       404:
- *         description: Galaxia no encontrada
+ *         description: Estrella no encontrada
  */
-app.delete('/galaxias/:id', async (req, res) => {
+app.delete('/estrellas/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
-    const [result] = await connection.query('DELETE FROM Galaxias WHERE id = ?', [id]);
+    const [result] = await connection.query('DELETE FROM Estrellas WHERE id = ?', [id]);
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Galaxia no encontrada' });
+      return res.status(404).json({ message: 'Estrella no encontrada' });
     }
-    res.json({ message: 'Galaxia eliminada' });
+    res.json({ message: 'Estrella eliminada' });
   } catch (err) {
-    console.error('Error en la consulta DELETE /galaxias/:id:', err);
-    res.status(500).json({ message: 'Error al eliminar galaxia' });
+    console.error('Error en la consulta DELETE /estrellas/:id:', err);
+    res.status(500).json({ message: 'Error al eliminar estrella' });
   }
 });
 
+// Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
