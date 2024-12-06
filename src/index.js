@@ -186,9 +186,141 @@ app.get('/galaxias/:id', async (req, res) => {
   }
 });
 
-// Otras rutas...
+/**
+ * @swagger
+ * /galaxias:
+ *   post:
+ *     description: Crear una nueva galaxia
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               masa_estelar:
+ *                 type: string
+ *               tipo_de_estrella:
+ *                 type: string
+ *               origen_galactico:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Galaxia creada
+ *       400:
+ *         description: Datos inválidos
+ */
+app.post('/galaxias', async (req, res) => {
+  const { nombre, masa_estelar, tipo_de_estrella, origen_galactico } = req.body;
+  if (!nombre || !masa_estelar || !tipo_de_estrella || !origen_galactico) {
+    return res.status(400).json({ message: 'Faltan datos requeridos' });
+  }
+  
+  try {
+    const [result] = await connection.query(
+      'INSERT INTO Galaxias (nombre, masa_estelar, tipo_de_estrella, origen_galactico) VALUES (?, ?, ?, ?)',
+      [nombre, masa_estelar, tipo_de_estrella, origen_galactico]
+    );
+    res.status(201).json({ id: result.insertId, nombre, masa_estelar, tipo_de_estrella, origen_galactico });
+  } catch (err) {
+    console.error('Error en la consulta POST /galaxias:', err);
+    res.status(500).json({ message: 'Error al crear galaxia' });
+  }
+});
 
-// Iniciar el servidor
+/**
+ * @swagger
+ * /galaxias/{id}:
+ *   put:
+ *     description: Actualizar una galaxia por ID
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de la galaxia a actualizar
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               masa_estelar:
+ *                 type: string
+ *               tipo_de_estrella:
+ *                 type: string
+ *               origen_galactico:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Galaxia actualizada
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Galaxia no encontrada
+ */
+app.put('/galaxias/:id', async (req, res) => {
+  const { id } = req.params;
+  const { nombre, masa_estelar, tipo_de_estrella, origen_galactico } = req.body;
+  
+  if (!nombre || !masa_estelar || !tipo_de_estrella || !origen_galactico) {
+    return res.status(400).json({ message: 'Faltan datos requeridos' });
+  }
+
+  try {
+    const [result] = await connection.query(
+      'UPDATE Galaxias SET nombre = ?, masa_estelar = ?, tipo_de_estrella = ?, origen_galactico = ? WHERE id = ?',
+      [nombre, masa_estelar, tipo_de_estrella, origen_galactico, id]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Galaxia no encontrada' });
+    }
+    res.json({ message: 'Galaxia actualizada' });
+  } catch (err) {
+    console.error('Error en la consulta PUT /galaxias/:id:', err);
+    res.status(500).json({ message: 'Error al actualizar galaxia' });
+  }
+});
+
+/**
+ * @swagger
+ * /galaxias/{id}:
+ *   delete:
+ *     description: Eliminar una galaxia por ID
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de la galaxia a eliminar
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Galaxia eliminada
+ *       404:
+ *         description: Galaxia no encontrada
+ */
+app.delete('/galaxias/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [result] = await connection.query('DELETE FROM Galaxias WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Galaxia no encontrada' });
+    }
+    res.json({ message: 'Galaxia eliminada' });
+  } catch (err) {
+    console.error('Error en la consulta DELETE /galaxias/:id:', err);
+    res.status(500).json({ message: 'Error al eliminar galaxia' });
+  }
+});
+
 app.listen(port, () => {
-  console.log(`Servidor Express corriendo en puerto ${port}`);
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
