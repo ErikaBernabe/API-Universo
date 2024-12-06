@@ -10,11 +10,11 @@ const port = process.env.PORT || 8082;
 
 // Configuración de la base de datos
 const dbConfig = {
-  host: 'autorack.proxy.rlwy.net:50333',
+  host: 'autorack.proxy.rlwy.net',
   user: 'root',
   password: 'GAFLacDflVxzSgxJPqxjJiBviHkAewmH',
   database: 'railway',
-  port: 3306,
+  port: 50333,
 };
 
 // Crear una conexión global
