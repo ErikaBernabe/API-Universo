@@ -4,7 +4,6 @@ const cors = require('cors');
 const swaggerUI = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const mysql = require('mysql2/promise'); // Usamos mysql2 para MySQL
-
 const app = express();
 const port = process.env.PORT || 8082;
 
@@ -130,7 +129,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs, {
 app.get('/galaxias', async (req, res) => {
   try {
     console.log('Conectando a la base de datos...');
-    const [rows] = await connection.query('SELECT * FROM Galaxias'); // Realiza la consulta
+    const [rows] = await connection.query('SELECT * FROM Estrellas'); // Realiza la consulta
     console.log('Resultado de la consulta:', rows); // Verifica qué está devolviendo la base de datos
     res.json(rows); // Devuelve los resultados
   } catch (err) {
@@ -175,7 +174,7 @@ app.get('/galaxias', async (req, res) => {
 app.get('/galaxias/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await connection.query('SELECT * FROM Galaxias WHERE id = ?', [id]); // Uso de parámetros
+    const [rows] = await connection.query('SELECT * FROM Estrellas WHERE id = ?', [id]); // Uso de parámetros
     if (rows.length === 0) {
       return res.status(404).json({ message: 'Galaxia no encontrada' });
     }
@@ -220,7 +219,7 @@ app.post('/galaxias', async (req, res) => {
   
   try {
     const [result] = await connection.query(
-      'INSERT INTO Galaxias (nombre, masa_estelar, tipo_de_estrella, origen_galactico) VALUES (?, ?, ?, ?)',
+      'INSERT INTO Estrellas (nombre, masa_estelar, tipo_de_estrella, origen_galactico) VALUES (?, ?, ?, ?)',
       [nombre, masa_estelar, tipo_de_estrella, origen_galactico]
     );
     res.status(201).json({ id: result.insertId, nombre, masa_estelar, tipo_de_estrella, origen_galactico });
@@ -275,7 +274,7 @@ app.put('/galaxias/:id', async (req, res) => {
 
   try {
     const [result] = await connection.query(
-      'UPDATE Galaxias SET nombre = ?, masa_estelar = ?, tipo_de_estrella = ?, origen_galactico = ? WHERE id = ?',
+      'UPDATE Estrellas SET nombre = ?, masa_estelar = ?, tipo_de_estrella = ?, origen_galactico = ? WHERE id = ?',
       [nombre, masa_estelar, tipo_de_estrella, origen_galactico, id]
     );
     if (result.affectedRows === 0) {
@@ -310,7 +309,7 @@ app.delete('/galaxias/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [result] = await connection.query('DELETE FROM Galaxias WHERE id = ?', [id]);
+    const [result] = await connection.query('DELETE FROM Estrellas WHERE id = ?', [id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Galaxia no encontrada' });
     }
